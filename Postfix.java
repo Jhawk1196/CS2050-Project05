@@ -17,11 +17,11 @@
 
 public class Postfix {
 
-	private static final char[] RECOGNIZED_OPERATIONS = { '-', '–', '+', '/', '*', '^' };
+	private static final char[] RECOGNIZED_OPERATIONS = { '-', 'â€“', '+', '/', '*', '^' };
 	private static final int[] OPERATION_PRIORITIES = { 0, 0, 0, 1, 1, 2 };
 
 	private String line;
-	private Stack<Character> stack = new Stack<Character>();
+	private Stackjr<Character> stack = new Stackjr<Character>();
 	char[] inputCharacters;
 
 	public Postfix() {
@@ -38,6 +38,7 @@ public class Postfix {
 	public String convertToPostfix(String input) {
 
 		line = "";
+		stack.clear();
 
 		if (input == null || input.trim().equals("")) {
 			line = "Error: No input found on this line from the input file.";
@@ -52,7 +53,7 @@ public class Postfix {
 		} // End If
 		for (int i = 0; i < inputCharacters.length; i++) {
 
-			if(i < 0) {
+			if(i > 0) {
 			if (isOperator(inputCharacters[i]) && isOperator(inputCharacters[i - 1])) {
 				line = "Invalid infix syntax between " + (i - 1) + " and " + i
 						+ ". Add a variable between the operators.";
@@ -94,11 +95,14 @@ public class Postfix {
 
 				line += inputCharacters[i] + " ";
 			} // End Else
+			
 		}
-
 		while (!stack.isEmpty()) {
 			if (stack.peek() == '(') {
-				return "Invalid syntax. Unclosed parenthesis at the end of the infix line.";
+				char holder = stack.pop();
+				if(stack.isEmpty()) {
+					return "Invalid syntax. Unclosed parenthesis at the end of the infix line.";
+				}
 			} // End If
 			line += stack.pop() + " ";
 		} // End while
